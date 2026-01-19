@@ -5,12 +5,14 @@ import mongoose from "mongoose";
 import Patient from "./models/Patient.model.js";
 import webhookRoutes from "./routes/webhook.routes.js";
 import doctorRoutes from "./routes/doctor.routes.js";
+import { errorHandler } from "./middlewares/error.middleware.js";
 
 const app = express();
 
 app.use(express.json()); // ✅ PEHLE body parser
 app.use("/webhook", webhookRoutes); // ✅ PHIR routes
 app.use("/api/doctor", doctorRoutes);
+app.use(errorHandler);
 
 mongoose
   .connect(process.env.MONGO_URI)
