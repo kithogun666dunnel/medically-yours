@@ -3,13 +3,17 @@ import twilio from "twilio";
 import express from "express";
 import mongoose from "mongoose";
 import Patient from "./models/Patient.model.js";
+import webhookRoutes from "./routes/webhook.routes.js";
+
+const app = express();
+
+app.use(express.json()); // ✅ PEHLE body parser
+app.use("/webhook", webhookRoutes); // ✅ PHIR routes
 
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected ✅"))
   .catch((err) => console.error("Mongo error ❌", err));
-
-const app = express();
 
 // 🔥 THIS WAS MISSING
 const client = twilio(
