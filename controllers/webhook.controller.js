@@ -1,37 +1,44 @@
 import PatientCase from "../models/PatientCase.model.js";
 import { SEVERITY } from "../constants/severity.js";
+import { whatsappWebhookSchema } from "../validators/webhook.schema.js";
 
-export const whatsappWebhook = async (req, res) => {
-  const { from, message } = req.body;
+export const whatsappWebhook = async (req, res, next) => {
+  try {
+    const parsed = whatsappWebhookSchema.parse(req.body);
 
-  let severity = SEVERITY.NORMAL;
+    const { from, message } = req.body;
 
-  // 🧠 VERY BASIC MVP LOGIC
-  const emergencyKeywords = [
-    "chest pain",
-    "breath",
-    "bleeding",
-    "unconscious",
-    "heart",
-    "accident",
-  ];
+    let severity = SEVERITY.NORMAL;
 
-  const isEmergency = emergencyKeywords.some((keyword) =>
-    message.toLowerCase().includes(keyword),
-  );
+    // 🧠 VERY BASIC MVP LOGIC
+    const emergencyKeywords = [
+      "chest pain",
+      "breath",
+      "bleeding",
+      "unconscious",
+      "heart",
+      "accident",
+    ];
 
-  if (isEmergency) {
-    severity = SEVERITY.EMERGENCY;
+    const isEmergency = emergencyKeywords.some((keyword) =>
+      message.toLowerCase().includes(keyword),
+    );
+
+    if (isEmergency) {
+      severity = SEVERITY.EMERGENCY;
+    }
+
+    await PatientCase.create({
+      patientName: from || "Unknown",
+      complaint: message,
+      severity,
+    });
+
+    res.status(200).json({
+      status: "case_created",
+      severity,
+    });
+  } catch (err) {
+    next(err);
   }
-
-  await PatientCase.create({
-    patientName: from || "Unknown",
-    complaint: message,
-    severity,
-  });
-
-  res.status(200).json({
-    status: "case_created",
-    severity,
-  });
 };

@@ -72,4 +72,32 @@ export const closePatientCase = async (req, res) => {
   }
 };
 
-//
+export const getClosedCasesHistory = async (req, res, next) => {
+  try {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const closedCases = await PatientCase.find({ status: "CLOSED" })
+      .sort({ updatedAt: -1 }) // latest closed first
+      .skip(skip)
+      .limit(limit);
+
+    const total = await PatientCase.countDocuments({ status: "CLOSED" });
+
+    res.json({
+      status: "success",
+      data: {
+        cases: closedCases,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
