@@ -6,9 +6,12 @@ import Patient from "./models/Patient.model.js";
 import webhookRoutes from "./routes/webhook.routes.js";
 import doctorRoutes from "./routes/doctor.routes.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
+import cors from "cors";
+import bodyParser from "body-parser";
 
 const app = express();
-
+app.use(cors());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json()); // ✅ PEHLE body parser
 app.use("/webhook", webhookRoutes); // ✅ PHIR routes
 app.use("/api/doctor", doctorRoutes);

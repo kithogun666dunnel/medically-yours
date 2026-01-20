@@ -4,13 +4,15 @@ import { whatsappWebhookSchema } from "../validators/webhook.schema.js";
 
 export const whatsappWebhook = async (req, res, next) => {
   try {
-    const parsed = whatsappWebhookSchema.parse(req.body);
+    const rawFrom = req.body.from || req.body.From;
+    const rawMessage = req.body.message || req.body.Body;
 
-    const { from, message } = req.body;
-
+    const { from, message } = whatsappWebhookSchema.parse({
+      from: rawFrom,
+      message: rawMessage,
+    });
     let severity = SEVERITY.NORMAL;
 
-    // 🧠 VERY BASIC MVP LOGIC
     const emergencyKeywords = [
       "chest pain",
       "breath",
@@ -29,16 +31,22 @@ export const whatsappWebhook = async (req, res, next) => {
     }
 
     await PatientCase.create({
-      patientName: from || "Unknown",
+      patientName: from,
       complaint: message,
       severity,
     });
 
-    res.status(200).json({
+    res.status(201).json({
       status: "case_created",
       severity,
     });
   } catch (err) {
-    next(err);
+    if (err.name === "ZodError") {
+      return res.status(400).json({
+        status: "error",
+        message: err.errors,
+      });
+    }
+    next(err); // 👈 IMPORTANT (warna silent 500)
   }
 };
