@@ -15,6 +15,11 @@ const caseSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    overrideSeverity: {
+      type: String,
+      enum: ["EMERGENCY", "NORMAL", null],
+      default: null,
+    },
   },
   { timestamps: true },
 );

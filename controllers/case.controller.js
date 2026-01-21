@@ -47,5 +47,21 @@ const updateCaseNotes = async (req, res) => {
     res.status(500).json({ error: "Failed to update notes" });
   }
 };
+const updateCaseOverride = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { overrideSeverity } = req.body;
 
-export { getCases, closeCase, updateCaseNotes };
+    const updated = await Case.findByIdAndUpdate(
+      id,
+      { overrideSeverity },
+      { new: true },
+    );
+
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to update override" });
+  }
+};
+
+export { getCases, closeCase, updateCaseNotes, updateCaseOverride };
