@@ -8,6 +8,7 @@ import doctorRoutes from "./routes/doctor.routes.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
 import cors from "cors";
 import bodyParser from "body-parser";
+import caseRoutes from "./routes/case.routes.js";
 
 const app = express();
 app.use(cors());
@@ -16,6 +17,8 @@ app.use(express.json()); // ✅ PEHLE body parser
 app.use("/webhook", webhookRoutes); // ✅ PHIR routes
 app.use("/api/doctor", doctorRoutes);
 app.use(errorHandler);
+
+app.use("/api", caseRoutes);
 
 mongoose
   .connect(process.env.MONGO_URI)
