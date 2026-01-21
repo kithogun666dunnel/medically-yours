@@ -11,6 +11,10 @@ const caseSchema = new mongoose.Schema(
     closedAt: {
       type: Date,
     },
+    notes: {
+      type: String,
+      default: "",
+    },
   },
   { timestamps: true },
 );

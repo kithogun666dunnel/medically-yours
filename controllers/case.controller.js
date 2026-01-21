@@ -35,5 +35,17 @@ const closeCase = async (req, res) => {
     res.status(500).json({ error: "Failed to close case" });
   }
 };
+const updateCaseNotes = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { notes } = req.body;
 
-export { getCases, closeCase };
+    const updated = await Case.findByIdAndUpdate(id, { notes }, { new: true });
+
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to update notes" });
+  }
+};
+
+export { getCases, closeCase, updateCaseNotes };
