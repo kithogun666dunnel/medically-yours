@@ -1,3 +1,6 @@
+//->legacy file for whatsapp webhook controller
+// --> new file for whatsapp webhook controller is /controllers/whatsapp/whatsappWebhook.controller.js
+
 import PatientCase from "../models/PatientCase.model.js";
 import { SEVERITY } from "../constants/severity.js";
 import { whatsappWebhookSchema } from "../validators/webhook.schema.js";
