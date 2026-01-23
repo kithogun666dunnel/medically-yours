@@ -1,16 +1,14 @@
 import express from "express";
-import {
-  getCases,
-  closeCase,
-  updateCaseNotes,
-  updateCaseOverride,
-} from "../controllers/case.controller.js";
 
 const router = express.Router();
 
-router.get("/cases", getCases);
-router.post("/cases/:id/close", closeCase);
-router.patch("/cases/:id/notes", updateCaseNotes);
-router.patch("/cases/:id/override", updateCaseOverride);
+// 🔒 Case routes temporarily disabled
+// during Layer-6 migration to TypeScript.
+// New implementation will re-enable these routes.
+
+// router.get("/cases", getCases);
+// router.post("/cases/:id/close", closeCase);
+// router.patch("/cases/:id/notes", updateCaseNotes);
+// router.patch("/cases/:id/override", updateCaseOverride);
 
 export default router;

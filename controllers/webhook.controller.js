@@ -1,7 +1,7 @@
 //->legacy file for whatsapp webhook controller
 // --> new file for whatsapp webhook controller is /controllers/whatsapp/whatsappWebhook.controller.js
 
-import PatientCase from "../models/PatientCase.model.js";
+// import PatientCase from "../models/PatientCase.model.js";
 import { SEVERITY } from "../constants/severity.js";
 import { whatsappWebhookSchema } from "../validators/webhook.schema.js";
 
@@ -33,15 +33,15 @@ export const whatsappWebhook = async (req, res, next) => {
       severity = SEVERITY.EMERGENCY;
     }
 
-    await PatientCase.create({
-      patientName: from,
-      complaint: message,
-      severity,
-    });
+    // await PatientCase.create({
+    //   patientName: from,
+    //   complaint: message,
+    //   severity,
+    // });
 
-    res.status(201).json({
-      status: "case_created",
-      severity,
+    res.status(200).json({
+      status: "ignored",
+      reason: "legacy webhook disabled during Layer-6 migration",
     });
   } catch (err) {
     if (err.name === "ZodError") {

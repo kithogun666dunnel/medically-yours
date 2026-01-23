@@ -1,6 +1,7 @@
 // controllers/whatsapp/whatsappWebhook.controller.js
 
-import caseStateMachine from "../../services/state-machine/caseStateMachine.js";
+// import caseStateMachine from "../../services/state-machine/caseStateMachine.js";
+// import { handleIncomingMessage } from "../../services/state-machine/caseStateMachine.js";
 
 const whatsappWebhookController = async (req, res) => {
   try {
@@ -15,9 +16,13 @@ const whatsappWebhookController = async (req, res) => {
     };
 
     /**
-     * STEP 2: Hand over to state machine
+     * STEP 2: Legacy state machine bypassed
+     * Layer-6 inbound flow will replace this
      */
-    await caseStateMachine.handleInboundMessage(inboundMessage);
+    console.log(
+      "[LEGACY] Inbound WhatsApp message ignored during Layer-6 migration",
+      inboundMessage,
+    );
 
     /**
      * STEP 3: Respond immediately

@@ -1,3 +1,5 @@
+throw new Error("Case APIs disabled — Layer 6 migration in progress");
+
 import Case from "../models/CaseSchema.model.js";
 
 const getCases = async (req, res) => {
