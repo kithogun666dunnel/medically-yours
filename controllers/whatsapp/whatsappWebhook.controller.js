@@ -1,7 +1,16 @@
+import { registerInboundMessage } from "../../services/whatsapp/idempotency.service.ts";
+import { handleInboundMessage } from "../../services/whatsapp/inbound.service.ts";
+
 const whatsappWebhookController = async (req, res) => {
   try {
+    // 🔒 Normalize at boundary
+    const rawFrom = req.body.From;
+    const phone = rawFrom.startsWith("whatsapp:")
+      ? rawFrom
+      : `whatsapp:${rawFrom}`;
+
     const inboundMessage = {
-      phone: req.body.From,
+      phone,
       text: req.body.Body,
       messageId: req.body.MessageSid,
       timestamp: new Date(),
@@ -12,11 +21,10 @@ const whatsappWebhookController = async (req, res) => {
       inboundMessage.phone,
     );
 
-    if (isDuplicate) {
-      return res.status(200).send("OK");
+    // 🔒 Hard guard: inbound only for new messages
+    if (!isDuplicate) {
+      await handleInboundMessage(inboundMessage);
     }
-
-    await handleInboundMessage(inboundMessage);
 
     return res.status(200).send("OK");
   } catch (error) {
