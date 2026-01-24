@@ -1,4 +1,5 @@
-import { WhatsappMessage } from "../../models/WhatsappMessage.model";
+import { WhatsappMessage } 
+from "../../models/WhatsappMessage.model.ts";
 
 export interface IdempotencyResult {
   isDuplicate: boolean;

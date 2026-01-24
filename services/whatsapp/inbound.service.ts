@@ -1,4 +1,4 @@
-import { Case } from "../../models/Case.model";
+import { Case } from "../../models/Case.model.ts";
 
 export interface InboundMessage {
   phone: string;
