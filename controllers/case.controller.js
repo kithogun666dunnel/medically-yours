@@ -1,69 +1,39 @@
-throw new Error("Case APIs disabled — Layer 6 migration in progress");
-
-import Case from "../models/CaseSchema.model.js";
-
-const getCases = async (req, res) => {
-  try {
-    const { status } = req.query;
-
-    const query = {};
-    if (status) query.status = status;
-
-    const cases = await Case.find(query).sort(
-      status === "CLOSED" ? { closedAt: -1 } : { updatedAt: -1 },
-    );
-
-    res.json(cases);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch cases" });
-  }
-};
+import { Case } from "../models/Case.model.ts";
+import CaseEvent from "../models/CaseEvent.model.ts";
 
 const closeCase = async (req, res) => {
+  // console.log("🔥 closeCase controller HIT");
+  // console.log("👉 req.params.id =", req.params.id);
+  // console.log("👉 Case model collection =", Case.collection.name);
+
   try {
     const { id } = req.params;
 
-    const updated = await Case.findByIdAndUpdate(
-      id,
-      {
-        status: "CLOSED",
-        closedAt: new Date(),
-      },
-      { new: true },
-    );
+    const patientCase = await Case.findById(id);
+    // console.log("👉 findById result =", patientCase);
 
-    res.json(updated);
+    if (!patientCase) {
+      return res.status(404).json({ error: "Case not found" });
+    }
+
+    if (patientCase.status === "CLOSED") {
+      return res.status(409).json({ error: "Case already closed" });
+    }
+
+    patientCase.status = "CLOSED";
+    patientCase.closedAt = new Date();
+    await patientCase.save();
+
+    await CaseEvent.create({
+      caseId: patientCase._id,
+      type: "CASE_CLOSED",
+    });
+
+    return res.json({ success: true, status: "CLOSED" });
   } catch (err) {
-    res.status(500).json({ error: "Failed to close case" });
-  }
-};
-const updateCaseNotes = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { notes } = req.body;
-
-    const updated = await Case.findByIdAndUpdate(id, { notes }, { new: true });
-
-    res.json(updated);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to update notes" });
-  }
-};
-const updateCaseOverride = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { overrideSeverity } = req.body;
-
-    const updated = await Case.findByIdAndUpdate(
-      id,
-      { overrideSeverity },
-      { new: true },
-    );
-
-    res.json(updated);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to update override" });
+    console.error(err);
+    return res.status(500).json({ error: "Failed to close case" });
   }
 };
 
-export { getCases, closeCase, updateCaseNotes, updateCaseOverride };
+export { closeCase };

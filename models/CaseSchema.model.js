@@ -1,7 +1,28 @@
-// LEGACY FILE — DO NOT USE
-// CaseSchema is deprecated.
-// Canonical Case model will live in models/Case.model.ts (Layer 6)
+import mongoose from "mongoose";
 
-export default function DeprecatedCaseModel() {
-  throw new Error("CaseSchema.model is deprecated. Use Layer-6 Case.model.ts");
-}
+const patientCaseSchema = new mongoose.Schema(
+  {
+    patientName: String,
+    age: Number,
+    complaint: String,
+
+    severity: {
+      type: Number,
+      enum: [1, 2],
+    },
+
+    status: {
+      type: String,
+      enum: ["OPEN", "CLOSED"],
+      default: "OPEN",
+    },
+
+    closedAt: Date,
+  },
+  {
+    timestamps: true,
+  },
+);
+
+export default mongoose.models.PatientCase ||
+  mongoose.model("PatientCase", patientCaseSchema);

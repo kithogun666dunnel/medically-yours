@@ -26,6 +26,10 @@ const patientCaseSchema = new mongoose.Schema(
       enum: ["OPEN", "CLOSED"],
       default: "OPEN",
     },
+    closedAt: {
+      type: Date,
+    },
+
     messages: [
       {
         text: String,
@@ -38,5 +42,5 @@ const patientCaseSchema = new mongoose.Schema(
     timestamps: true, // createdAt, updatedAt
   },
 );
-
-export default mongoose.model("PatientCase", patientCaseSchema);
+export default mongoose.models.PatientCase ||
+  mongoose.model("PatientCase", patientCaseSchema);

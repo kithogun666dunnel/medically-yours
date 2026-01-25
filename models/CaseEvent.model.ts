@@ -1,47 +1,36 @@
-import { Schema, model, Document, Types } from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
-export type CaseEventType = "CASE_OPENED" | "CASE_CLOSED";
-export type ActorType = "doctor" | "system";
-
-export interface ICaseEvent extends Document {
-  caseId: Types.ObjectId;
-  eventType: CaseEventType;
-  actorType: ActorType;
-  metadata?: Record<string, any>;
+export interface CaseEventDocument extends Document {
+  caseId: mongoose.Types.ObjectId;
+  type: "CASE_CREATED" | "CASE_CLOSED";
+  meta?: Record<string, any>;
   createdAt: Date;
 }
 
-const CaseEventSchema = new Schema<ICaseEvent>(
-  {
-    caseId: {
-      type: Schema.Types.ObjectId,
-      ref: "Case",
-      required: true,
-    },
-    eventType: {
-      type: String,
-      enum: ["CASE_OPENED", "CASE_CLOSED"],
-      required: true,
-    },
-    actorType: {
-      type: String,
-      enum: ["doctor", "system"],
-      required: true,
-    },
-    metadata: {
-      type: Object,
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
+const CaseEventSchema = new Schema<CaseEventDocument>({
+  caseId: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    index: true,
   },
-  {
-    timestamps: false,
-  }
-);
 
-export const CaseEvent = model<ICaseEvent>(
+  type: {
+    type: String,
+    enum: ["CASE_CREATED", "CASE_CLOSED"],
+    required: true,
+  },
+
+  meta: {
+    type: Schema.Types.Mixed,
+  },
+
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+export default mongoose.model<CaseEventDocument>(
   "CaseEvent",
   CaseEventSchema
 );
