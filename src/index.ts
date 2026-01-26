@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import bodyParser from "body-parser";
 import twilio from "twilio";
+import { initIndexes } from "./db/initIndexes";
 
 import Patient from "./models/Patient.model";
 import webhookRoutes from "./routes/webhook.routes";
@@ -33,10 +34,19 @@ app.get("/", (req, res) => {
 app.use(errorHandler);
 
 /* -------------------- DB -------------------- */
+
 mongoose
   .connect(process.env.MONGO_URI as string)
-  .then(() => console.log("MongoDB connected ✅"))
-  .catch((err) => console.error("Mongo error ❌", err));
+  .then(async () => {
+    console.log("MongoDB connected ✅");
+
+    await initIndexes();
+    console.log("Indexes synced ✅");
+  })
+  .catch((err) => {
+    console.error("Mongo error ❌", err);
+    process.exit(1);
+  });
 
 /* -------------------- TWILIO -------------------- */
 const client = twilio(
