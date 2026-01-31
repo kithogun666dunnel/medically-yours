@@ -1,12 +1,17 @@
-// src/reactions/dispatcher.ts
+import { DomainEvent, ReactionHandler } from './reaction.types'
 
 export class ReactionDispatcher {
-  constructor() {
-    // intentionally empty
+  private handlers: ReactionHandler[] = []
+
+  register(handler: ReactionHandler) {
+    this.handlers.push(handler)
   }
 
-  async dispatch(event: any): Promise<void> {
-    // reactions will be added later
-    return
+  async dispatch(event: DomainEvent): Promise<void> {
+    for (const handler of this.handlers) {
+      if (handler.eventType === event.type) {
+        await handler.handle(event)
+      }
+    }
   }
 }
