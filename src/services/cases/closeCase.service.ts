@@ -4,15 +4,16 @@
    and audit event emission.
 ------------------------------------------------------------- */
 
-
 import { Case } from "../../models/Case.model";
 import { CaseEvent } from "../../models/CaseEvent.model";
+import { reactionDispatcher } from "../../reactions";
+
 
 /**
  * Closes an OPEN case.
  * Idempotent operation.
  */
-export  async function closeCase({ caseId, reason, actor = "doctor" }) {
+export async function closeCase({ caseId, reason, actor = "doctor" }) {
   const updatedCase = await Case.findOneAndUpdate(
     { _id: caseId, status: "OPEN" },
     {
@@ -23,16 +24,25 @@ export  async function closeCase({ caseId, reason, actor = "doctor" }) {
         closedReason: reason,
       },
     },
-    { new: true },
+    { new: true }
   );
 
+  // idempotency guard
   if (!updatedCase) return;
-
-  await CaseEvent.create({
+  
+  // create audit event
+  const event = await CaseEvent.create({
     caseId: updatedCase._id,
     type: "CASE_CLOSED",
     actorType: actor,
     meta: reason ? { reason } : undefined,
+  });
+  console.log("CASE EVENT CREATED:", event._id.toString());
+
+  // 🔔 announce event to reaction layer
+  await reactionDispatcher.dispatch({
+    _id: event._id.toString(),
+    type: event.type,
   });
 }
 

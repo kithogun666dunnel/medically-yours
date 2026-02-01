@@ -5,7 +5,7 @@
 --------------------------------------------------------- */
 
 
-import { closeCase } from "../services/cases/closure.service";
+import { closeCase } from "../services/cases/closeCase.service";
 
 export const closeCaseController = async (req, res, next) => {
   try {

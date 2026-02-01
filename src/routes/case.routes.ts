@@ -5,7 +5,7 @@
 ---------------------------------------------------- */
 
 import express from "express";
-import { closeCaseController } from "../controllers/case.controller";
+import { closeCaseController } from "../controllers/CloseCase.controller";
 
 const router = express.Router();
 

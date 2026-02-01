@@ -1,99 +1,99 @@
-/* -------------------- DOCTOR ROUTES (LEGACY) --------------------
-   Exposes APIs used by the existing doctor dashboard.
-   These routes rely on legacy PatientCase models and
-   are maintained for backward compatibility only.
----------------------------------------------------------------- */
+  /* -------------------- DOCTOR ROUTES (LEGACY) --------------------
+    Exposes APIs used by the existing doctor dashboard.
+    These routes rely on legacy PatientCase models and
+    are maintained for backward compatibility only.
+  ---------------------------------------------------------------- */
 
 
-import express from "express";
-import {
-  getDoctorDashboard,
-  closePatientCase,
-  getClosedCasesHistory,
-} from "../controllers/doctor.controller";
+  import express from "express";
+  import {
+    getDoctorDashboard,
+    closePatientCase,
+    getClosedCasesHistory,
+  } from "../controllers/doctor.controller";
 
-const router = express.Router();
+  const router = express.Router();
 
-router.get("/dashboard", getDoctorDashboard);
-router.patch("/cases/:id/close", closePatientCase);
-router.get("/cases/closed", getClosedCasesHistory);
+  router.get("/dashboard", getDoctorDashboard);
+  router.patch("/cases/:id/close", closePatientCase);
+  router.get("/cases/closed", getClosedCasesHistory);
 
-export default router;
-
-
-
+  export default router;
 
 
 
 
 
 
-/*
-✅ What this file is doing
 
-This file exposes doctor-facing APIs.
 
-Endpoints:
 
-GET /dashboard
+  /*
+  ✅ What this file is doing
 
-PATCH /cases/:id/close
+  This file exposes doctor-facing APIs.
 
-GET /cases/closed
+  Endpoints:
 
-These are:
+  GET /dashboard
 
-legacy / transitional endpoints
+  PATCH /cases/:id/close
 
-built on top of PatientCase model
+  GET /cases/closed
 
-used by older dashboard UI
+  These are:
 
-🧠 Why this file still exists (important context)
+  legacy / transitional endpoints
 
-Tumhare system me do parallel worlds hain:
+  built on top of PatientCase model
 
-1️⃣ Canonical world (new)
+  used by older dashboard UI
 
-Case
+  🧠 Why this file still exists (important context)
 
-CaseEvent
+  Tumhare system me do parallel worlds hain:
 
-WhatsApp-first
+  1️⃣ Canonical world (new)
 
-Clean lifecycle
+  Case
 
-New case.routes.ts
+  CaseEvent
 
-2️⃣ Doctor dashboard world (legacy)
+  WhatsApp-first
 
-PatientCase
+  Clean lifecycle
 
-severity-based sorting
+  New case.routes.ts
 
-traditional CRUD APIs
+  2️⃣ Doctor dashboard world (legacy)
 
-doctor.routes.ts
+  PatientCase
 
-👉 Is file ko delete nahi kiya gaya because:
+  severity-based sorting
 
-dashboard abhi dependent hai
+  traditional CRUD APIs
 
-migration incremental hai
+  doctor.routes.ts
 
-production break nahi karna
+  👉 Is file ko delete nahi kiya gaya because:
 
-🔒 Boundary rule
+  dashboard abhi dependent hai
 
-Is file:
+  migration incremental hai
 
-❌ new features add nahi honge
+  production break nahi karna
 
-❌ new logic design nahi hoga
+  🔒 Boundary rule
 
-✅ sirf existing dashboard ko support karega
+  Is file:
 
-Agar koi engineer yahan naya logic add kare:
-👉 architecture smell
+  ❌ new features add nahi honge
 
-*/
+  ❌ new logic design nahi hoga
+
+  ✅ sirf existing dashboard ko support karega
+
+  Agar koi engineer yahan naya logic add kare:
+  👉 architecture smell
+
+  */

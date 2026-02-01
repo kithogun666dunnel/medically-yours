@@ -1,5 +1,5 @@
 import { ReactionDispatcher } from './dispatcher'
-import { logCaseCreated } from './handlers/logCaseCreated'
+import { logCaseCreated } from './handlers/onCaseClosed.reaction'
 
 export const reactionDispatcher = new ReactionDispatcher()
 
